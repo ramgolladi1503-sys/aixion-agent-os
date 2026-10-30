@@ -1,0 +1,31 @@
+{
+  "task_id": "TASK-6DB04353",
+  "title": "Interrupted task",
+  "prompt": "Do something long",
+  "profile": "production_software",
+  "safety_critical": false,
+  "team": [],
+  "current_state": "REQUIREMENT_READY",
+  "history": [
+    {
+      "from_state": null,
+      "to_state": "BACKLOG",
+      "role": "SYSTEM",
+      "timestamp": "2026-10-30T21:01:29.565524+00:00",
+      "evidence": "Task initialized"
+    },
+    {
+      "from_state": "BACKLOG",
+      "to_state": "REQUIREMENT_READY",
+      "role": "BUSINESS_ANALYST",
+      "actor_id": "ba-1",
+      "timestamp": "2026-10-30T21:01:29.565988+00:00",
+      "evidence": {
+        "req": "step 1"
+      },
+      "human_approved": false
+    }
+  ],
+  "artifacts": {},
+  "approvals": {}
+}

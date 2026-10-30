@@ -1,0 +1,53 @@
+version: "1.0.0"
+risk_model: "Aixion 3-Tier Risk Classification"
+
+levels:
+  HIGH:
+    description: "Actions directly impacting live environments, capital/orders, authentication secrets, or system integrity."
+    requires_human_approval: true
+    allow_agent_override: false
+    applicable_divisions:
+      - security
+      - finance
+    keywords:
+      - live
+      - broker
+      - order
+      - trading
+      - credential
+      - secret
+      - root
+      - infrastructure
+      - destroy
+      - drop
+
+  MEDIUM:
+    description: "Actions impacting shared architecture, database schemas, external API clients, or non-functional thresholds."
+    requires_human_approval: false
+    requires_peer_review: true
+    mandatory_roles:
+      - System Architect
+      - Senior QA
+    keywords:
+      - schema
+      - migration
+      - api
+      - database
+      - concurrency
+      - performance
+      - network
+
+  LOW:
+    description: "Standard local development, documentation, UI component layout, unit test authorship."
+    requires_human_approval: false
+    requires_peer_review: false
+    mandatory_roles:
+      - Developer
+      - QA Engineer
+    keywords:
+      - frontend
+      - ui
+      - styling
+      - docs
+      - test
+      - refactor
