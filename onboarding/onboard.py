@@ -1,61 +1,119 @@
 #!/usr/bin/env python3
-"""
-onboard.py — Onboards an existing or new Aixion Lab repository into Aixion Agent OS.
-Generates .aixion/ configuration, connects to central catalog, applies Agile lifecycle,
-and preserves project-specific safety rules.
-"""
+"""Safe, repeatable onboarding for any existing or newly created Git repository.
 
-import sys
+The generated files are portable: no absolute developer-machine paths. Onboarding
+is an explicit local step; GitHub does not automatically apply it to new repos.
+"""
+import argparse
+import datetime
 import json
-import shutil
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+POLICY_REPO = "ramgolladi1503-sys/aixion-agent-os"
+WORKFLOW_REF = "master"
 
-def onboard_project(target_repo_path: str, project_name: str = None, project_type: str = "general"):
-    repo_path = Path(target_repo_path).resolve()
-    if not repo_path.exists():
-        raise FileNotFoundError(f"Target repository {repo_path} does not exist.")
-        
-    p_name = project_name or repo_path.name
-    aixion_dir = repo_path / ".aixion"
-    aixion_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Detect technology stack
-    tech_stack = []
-    if (repo_path / "package.json").exists():
-        tech_stack.append("node/typescript")
-    if (repo_path / "requirements.txt").exists() or (repo_path / "pyproject.toml").exists() or any(repo_path.glob("*.py")):
-        tech_stack.append("python")
-    if (repo_path / "pubspec.yaml").exists():
-        tech_stack.append("flutter/dart")
-        
-    config = {
-        "project_name": p_name,
-        "project_type": project_type,
-        "tech_stack": tech_stack,
-        "agent_os_root": str(BASE_DIR),
-        "lifecycle_profile": "production_software",
-        "governance_mode": "strict",
-        "evidence_dir": ".aixion/evidence",
-        "onboarded_at": "2026-10-31T02:15:00Z"
+def _technology(path):
+    indicators = {
+        "python": ["pyproject.toml", "requirements.txt", "setup.py"],
+        "node": ["package.json"],
+        "go": ["go.mod"],
+        "rust": ["Cargo.toml"],
+        "java": ["pom.xml", "build.gradle", "build.gradle.kts"],
+        "flutter": ["pubspec.yaml"],
     }
-    
-    (aixion_dir / "config.json").write_text(json.dumps(config, indent=2), encoding="utf-8")
-    (aixion_dir / "evidence").mkdir(exist_ok=True)
-    
-    # Symlink or reference governance
-    gov_link = aixion_dir / "GOVERNANCE.md"
-    gov_link.write_text(
-        f"# Aixion Agent OS Onboarding\n\nThis project is managed under Aixion Agent OS governance.\nCentral Agent OS location: `{BASE_DIR}`\n",
-        encoding="utf-8"
-    )
-    
-    print(f"Successfully onboarded {p_name} at {repo_path}")
-    return config
+    return [name for name, markers in indicators.items() if any((path / marker).is_file() for marker in markers)]
+
+def _create_once(path, content):
+    if path.exists() or path.is_symlink():
+        return "preserved"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("x", encoding="utf-8") as stream:
+        stream.write(content)
+    return "created"
+
+def onboard_project(target_repo_path, project_name=None, project_type="general", require_git=True):
+    path = Path(target_repo_path).expanduser().resolve()
+    if not path.is_dir():
+        raise FileNotFoundError(f"Repository directory not found: {path}")
+    if require_git and not (path / ".git").exists():
+        raise ValueError("Not a Git repository; initialize Git first or use --allow-non-git")
+    if project_type not in {"general", "trading", "research", "web", "backend", "mobile", "platform"}:
+        raise ValueError("Unsupported project type")
+    aixion = path / ".aixion"
+    existing = aixion / "config.json"
+    if existing.is_symlink():
+        raise PermissionError("Refusing symlinked project configuration")
+    if existing.exists():
+        try:
+            old = json.loads(existing.read_text(encoding="utf-8"))
+        except (ValueError, UnicodeError) as exc:
+            raise ValueError("Existing config invalid; refusing overwrite") from exc
+        if not isinstance(old, dict):
+            raise ValueError("Existing config must be an object")
+        return {"status": "already_onboarded", "project_name": old.get("project_name", path.name),
+                "files": {}, "config": old}
+
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    config = {
+        "schema_version": 1, "project_name": project_name or path.name,
+        "project_type": project_type, "tech_stack": _technology(path),
+        "agent_os_repository": POLICY_REPO,
+        "lifecycle_profile": "research" if project_type == "research" else "production_software",
+        "governance_mode": "strict", "evidence_dir": ".aixion/evidence",
+        "onboarded_at": now
+    }
+    instructions = """# Aixion Lab project instructions
+
+This repository uses the Aixion Agent OS catalog and governance:
+https://github.com/ramgolladi1503-sys/aixion-agent-os
+
+Before implementation: inspect this repository's own instructions and safety
+constraints, classify the task, and select a minimal suitable agent team.
+Do not assume a role prompt grants permissions. Record requirements, design,
+implementation and independent QA evidence. Never bypass protected branches,
+human approval, production or broker safety controls.
+
+For local agent selection use the centrally installed Aixion CLI; do not
+assume it is installed on all machines. If unavailable, report the missing
+integration rather than fabricating execution.
+"""
+    workflow = """name: Aixion Agent OS governance
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  governance:
+    uses: ramgolladi1503-sys/aixion-agent-os/.github/workflows/reusable-governance.yml@master
+"""
+    governance = """# Organization governance
+
+Source of truth: https://github.com/ramgolladi1503-sys/aixion-agent-os
+This file is a pointer, not evidence of an installed runtime adapter.
+Project-specific safety rules remain in force. Never merge without approved
+review and passing CI. The reusable workflow checks configuration structure;
+it does not authenticate release approvals.
+"""
+    files = {}
+    files["AGENTS.md"] = _create_once(path / "AGENTS.md", instructions)
+    files[".aixion/GOVERNANCE.md"] = _create_once(aixion / "GOVERNANCE.md", governance)
+    files[".github/workflows/aixion-governance.yml"] = _create_once(
+        path / ".github/workflows" / "aixion-governance.yml", workflow)
+    files[".aixion/config.json"] = _create_once(
+        existing, json.dumps(config, indent=2, ensure_ascii=False) + "\n")
+    return {"status": "onboarded", "project_name": config["project_name"],
+            "files": files, "config": config}
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("path")
+    parser.add_argument("--name")
+    parser.add_argument("--type", default="general", dest="project_type")
+    parser.add_argument("--allow-non-git", action="store_true")
+    args = parser.parse_args()
+    print(json.dumps(onboard_project(args.path, args.name, args.project_type,
+                                     require_git=not args.allow_non_git), indent=2))
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: onboard.py <repo_path> [project_name] [project_type]")
-        sys.exit(1)
-    onboard_project(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None, sys.argv[3] if len(sys.argv) > 3 else "general")
+    main()
