@@ -1,0 +1,35 @@
+name: Aixion reusable governance
+on:
+  workflow_call:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate-onboarding:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify onboarding contract
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          conf = Path(".aixion/config.json")
+          if not conf.is_file() or conf.is_symlink():
+              raise SystemExit("Missing or unsafe .aixion/config.json")
+          data = json.loads(conf.read_text(encoding="utf-8"))
+          for field in ("schema_version", "project_name", "project_type", "agent_os_repository", "governance_mode", "lifecycle_profile"):
+              if not data.get(field):
+                  raise SystemExit(f"Missing required field: {field}")
+          if data["schema_version"] != 1:
+              raise SystemExit("Unsupported onboarding schema")
+          if data["agent_os_repository"] != "ramgolladi1503-sys/aixion-agent-os":
+              raise SystemExit("Wrong central policy repository")
+          if data["governance_mode"] != "strict":
+              raise SystemExit("Governance mode must be strict")
+          if not Path("AGENTS.md").is_file():
+              raise SystemExit("Missing AGENTS.md")
+          print("Aixion onboarding contract valid")
+          PY
