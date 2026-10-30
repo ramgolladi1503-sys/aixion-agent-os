@@ -1,0 +1,102 @@
+version: "1.0.0"
+lifecycle_name: "Aixion Agile Delivery Lifecycle"
+
+states:
+  - id: BACKLOG
+    description: "Idea, bug report, or feature request logged."
+    responsible_role: "Product Owner / Business Analyst"
+    allowed_transitions: ["REQUIREMENT_READY", "BLOCKED_REQUIREMENT"]
+
+  - id: REQUIREMENT_READY
+    description: "Scope, business goals, and acceptance criteria defined."
+    responsible_role: "Business Analyst"
+    required_artifacts: ["requirements_spec", "acceptance_criteria"]
+    allowed_transitions: ["DESIGN_READY", "BACKLOG", "BLOCKED_REQUIREMENT"]
+
+  - id: DESIGN_READY
+    description: "System/Solution architecture, risk review, and contracts defined."
+    responsible_role: "System Architect / Solution Architect"
+    required_artifacts: ["architecture_contract", "risk_assessment"]
+    allowed_transitions: ["IN_DEVELOPMENT", "REQUIREMENT_READY", "BLOCKED_DESIGN"]
+
+  - id: IN_DEVELOPMENT
+    description: "Active implementation and scoped unit tests."
+    responsible_role: "Developer (Backend, Frontend, Data, etc.)"
+    required_artifacts: ["code_patch", "scoped_tests"]
+    allowed_transitions: ["DEV_VERIFIED", "IN_DEVELOPMENT", "BLOCKED_DATA"]
+
+  - id: DEV_VERIFIED
+    description: "Developer self-tests pass; ready for independent QA."
+    responsible_role: "Developer"
+    required_artifacts: ["unit_test_results", "implementation_summary"]
+    allowed_transitions: ["QA_IN_PROGRESS"]
+
+  - id: QA_IN_PROGRESS
+    description: "Independent QA and Senior QA testing against acceptance criteria."
+    responsible_role: "QA Engineer / Senior QA"
+    required_artifacts: ["test_execution_log", "defect_report"]
+    allowed_transitions: ["QA_VERIFIED", "QA_FAILED"]
+
+  - id: QA_FAILED
+    description: "Defects found; returned to developer with failure evidence."
+    responsible_role: "QA Engineer"
+    required_artifacts: ["defect_details", "reproduction_steps"]
+    allowed_transitions: ["IN_DEVELOPMENT"]
+
+  - id: QA_VERIFIED
+    description: "QA and Senior QA sign off on test evidence and contract compliance."
+    responsible_role: "Senior QA"
+    required_artifacts: ["qa_signoff", "regression_test_evidence"]
+    allowed_transitions: ["UAT_APPROVED", "QA_FAILED"]
+
+  - id: UAT_APPROVED
+    description: "User acceptance criteria verified by PO or designated reviewer."
+    responsible_role: "Product Owner / UAT Reviewer"
+    required_artifacts: ["acceptance_proof", "uat_signoff"]
+    allowed_transitions: ["RELEASE_READY", "BACKLOG"]
+
+  - id: RELEASE_READY
+    description: "Release artifacts packaged, PR open, CI green, awaiting human approval."
+    responsible_role: "Release Manager"
+    required_artifacts: ["pr_link", "ci_status", "release_notes"]
+    allowed_transitions: ["RELEASED", "RELEASE_BLOCKED"]
+
+  - id: RELEASED
+    description: "Code merged to protected branch and deployed."
+    responsible_role: "Human Approver / Release Engineer"
+    required_artifacts: ["merge_commit_sha", "deployment_telemetry"]
+    allowed_transitions: ["DONE"]
+
+  - id: DONE
+    description: "Completed and production-verified."
+    responsible_role: "Platform Lead"
+    required_artifacts: ["verification_evidence"]
+    allowed_transitions: []
+
+profiles:
+  production_software:
+    mandatory_states:
+      - REQUIREMENT_READY
+      - DESIGN_READY
+      - IN_DEVELOPMENT
+      - DEV_VERIFIED
+      - QA_VERIFIED
+      - UAT_APPROVED
+      - RELEASE_READY
+      - RELEASED
+  research:
+    mandatory_states:
+      - REQUIREMENT_READY
+      - DESIGN_READY
+      - IN_DEVELOPMENT
+      - DEV_VERIFIED
+      - QA_VERIFIED
+    optional_states:
+      - RELEASE_READY
+      - RELEASED
+  documentation:
+    mandatory_states:
+      - REQUIREMENT_READY
+      - IN_DEVELOPMENT
+      - QA_VERIFIED
+      - RELEASE_READY

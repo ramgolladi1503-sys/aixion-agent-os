@@ -1,0 +1,42 @@
+{
+  "task_id": "TASK-159CA726",
+  "title": "High-risk execution task",
+  "prompt": "Enable live trading",
+  "profile": "production_software",
+  "safety_critical": true,
+  "team": [],
+  "current_state": "DESIGN_READY",
+  "history": [
+    {
+      "from_state": null,
+      "to_state": "BACKLOG",
+      "role": "SYSTEM",
+      "timestamp": "2026-10-30T20:43:55.827815+00:00",
+      "evidence": "Task initialized"
+    },
+    {
+      "from_state": "BACKLOG",
+      "to_state": "REQUIREMENT_READY",
+      "role": "BUSINESS_ANALYST",
+      "actor_id": "ba-1",
+      "timestamp": "2026-10-30T20:43:55.851202+00:00",
+      "evidence": {
+        "req": "ok"
+      },
+      "human_approved": false
+    },
+    {
+      "from_state": "REQUIREMENT_READY",
+      "to_state": "DESIGN_READY",
+      "role": "ARCHITECT",
+      "actor_id": "arch-1",
+      "timestamp": "2026-10-30T20:43:55.852080+00:00",
+      "evidence": {
+        "design": "ok"
+      },
+      "human_approved": false
+    }
+  ],
+  "artifacts": {},
+  "approvals": {}
+}

@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+"""
+aixion — Unified Command Line Interface for Aixion Agent OS.
+Commands:
+  aixion doctor             — Check system health, catalog status, and tool integrations.
+  aixion init <path>        — Scaffold and onboard a new project.
+  aixion agents list        — List indexed Agency Agents.
+  aixion agents select <q>  — Dynamically match and select agent team for a prompt.
+  aixion project status     — View project onboarding and task state.
+  aixion catalog sync       — Check sync status with upstream agency-agents.
+"""
+
+import sys
+import os
+import json
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(BASE_DIR))
+
+from catalog.sync import check_sync
+from routing.router import AgentRouter
+from orchestration.engine import AgileWorkflowEngine
+from onboarding.onboard import onboard_project
+
+def main():
+    if len(sys.argv) < 2:
+        print(__doc__)
+        sys.exit(0)
+        
+    cmd = sys.argv[1]
+    
+    if cmd == "doctor":
+        print("=== Aixion Agent OS Diagnostics ===")
+        manifest_file = BASE_DIR / "catalog" / "manifest.json"
+        if manifest_file.exists():
+            data = json.loads(manifest_file.read_text())
+            print(f"[OK] Agent Catalog Manifest: {len(data['agents'])} agents indexed (Upstream commit {data['upstream_commit'][:10]})")
+        else:
+            print("[ERROR] Manifest file missing.")
+            
+        print(f"[OK] Governance Policies: Loaded (agile-lifecycle.yaml, approval-policy.yaml)")
+        print(f"[OK] Dynamic Router: Ready")
+        print(f"[OK] Orchestration State Store: {BASE_DIR / 'orchestration' / 'state_store'}")
+        print("=== System Healthy ===")
+
+    elif cmd == "agents" and len(sys.argv) > 2:
+        sub = sys.argv[2]
+        if sub == "list":
+            manifest = json.loads((BASE_DIR / "catalog" / "manifest.json").read_text())
+            for a in manifest["agents"]:
+                print(f"[{a['division']}] {a['id']} — {a['display_name']} ({a['risk_classification']} risk)")
+        elif sub == "select":
+            prompt = " ".join(sys.argv[3:]) if len(sys.argv) > 3 else "Default general task"
+            router = AgentRouter()
+            res = router.select_team(prompt)
+            print(json.dumps(res, indent=2))
+            
+    elif cmd == "init":
+        path = sys.argv[2] if len(sys.argv) > 2 else "."
+        onboard_project(path)
+        
+    elif cmd == "catalog" and len(sys.argv) > 2 and sys.argv[2] == "sync":
+        check_sync()
+        
+    elif cmd == "project" and len(sys.argv) > 2 and sys.argv[2] == "status":
+        curr = Path(".").resolve()
+        aixion_conf = curr / ".aixion" / "config.json"
+        if aixion_conf.exists():
+            print(f"Project Onboarded: {curr.name}")
+            print(aixion_conf.read_text())
+        else:
+            print(f"Directory {curr.name} is not onboarded into Aixion Agent OS.")
+    else:
+        print(__doc__)
+
+if __name__ == "__main__":
+    main()

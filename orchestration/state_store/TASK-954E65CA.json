@@ -1,0 +1,31 @@
+{
+  "task_id": "TASK-954E65CA",
+  "title": "Sample UI Component",
+  "prompt": "Build React button",
+  "profile": "production_software",
+  "safety_critical": false,
+  "team": [],
+  "current_state": "REQUIREMENT_READY",
+  "history": [
+    {
+      "from_state": null,
+      "to_state": "BACKLOG",
+      "role": "SYSTEM",
+      "timestamp": "2026-10-30T20:42:39.188232+00:00",
+      "evidence": "Task initialized"
+    },
+    {
+      "from_state": "BACKLOG",
+      "to_state": "REQUIREMENT_READY",
+      "role": "BUSINESS_ANALYST",
+      "actor_id": "design-ui-designer",
+      "timestamp": "2026-10-30T20:42:39.188865+00:00",
+      "evidence": {
+        "spec": "Button spec defined"
+      },
+      "human_approved": false
+    }
+  ],
+  "artifacts": {},
+  "approvals": {}
+}

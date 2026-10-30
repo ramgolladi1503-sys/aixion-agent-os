@@ -1,0 +1,30 @@
+upstream_repository: "https://github.com/msitarzewski/agency-agents.git"
+pinned_commit: "b37b5bb33b78f2c1d6567d98e25ca818e3259219"
+sync_policy:
+  mode: "pinned-review"
+  allow_auto_merge: false
+  quarantine_new_agents: true
+  checksum_verification: true
+  signature_verification: false
+indexing:
+  scan_directories:
+    - academic
+    - design
+    - engineering
+    - finance
+    - game-development
+    - gis
+    - healthcare
+    - marketing
+    - paid-media
+    - product
+    - project-management
+    - research
+    - sales
+    - security
+    - spatial-computing
+    - specialized
+    - strategy
+    - support
+    - testing
+  output_manifest: "catalog/manifest.json"

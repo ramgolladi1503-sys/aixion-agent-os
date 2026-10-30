@@ -1,0 +1,26 @@
+version: "1.0.0"
+contract_schema:
+  task_packet:
+    required_fields:
+      - task_id
+      - title
+      - profile
+      - scope
+      - current_state
+      - responsible_role
+      - assigned_agent
+      - allowed_paths
+      - forbidden_paths
+      - entry_criteria_met
+  handoff_receipt:
+    required_fields:
+      - handoff_id
+      - task_id
+      - from_role
+      - to_role
+      - timestamp
+      - artifacts_produced
+      - test_evidence_summary
+      - verification_status # PASS, FAIL, BLOCKED
+      - human_approval_obtained # boolean if gate triggered
+      - next_state

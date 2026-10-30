@@ -1,0 +1,36 @@
+version: "1.0.0"
+governance_gates:
+  - id: GATE_SAFETY_CRITICAL
+    description: "Actions impacting financial orders, live systems, credentials, or kill switches."
+    requires_human_approval: true
+    allow_agent_override: false
+    triggers:
+      - "order_action == true"
+      - "live_mode == true"
+      - "risk_gate_modification == true"
+      - "credentials_modified == true"
+      - "kill_switch_disabled == true"
+
+  - id: GATE_RELEASE_MERGE
+    description: "Merging to main or release branches."
+    requires_human_approval: true
+    allow_agent_override: false
+    triggers:
+      - "branch == 'main'"
+      - "branch == 'master'"
+      - "branch =~ '^release/.*'"
+
+  - id: GATE_DESTRUCTIVE_EXECUTION
+    description: "Filesystem deletion outside scratch, database drops, cloud infrastructure destruction."
+    requires_human_approval: true
+    allow_agent_override: false
+    triggers:
+      - "command =~ 'rm -rf'"
+      - "command =~ 'DROP DATABASE'"
+      - "command =~ 'terraform destroy'"
+
+  - id: GATE_ROLE_APPROVAL
+    description: "Standard peer review gates (QA, Senior QA, UAT)."
+    requires_human_approval: false
+    requires_role_separation: true
+    forbidden_self_approval: true
