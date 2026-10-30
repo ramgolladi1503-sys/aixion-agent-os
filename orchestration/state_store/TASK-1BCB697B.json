@@ -1,0 +1,42 @@
+{
+  "task_id": "TASK-1BCB697B",
+  "title": "Live trading bypass",
+  "prompt": "Execute real capital order",
+  "profile": "production_software",
+  "safety_critical": true,
+  "team": [],
+  "current_state": "DESIGN_READY",
+  "history": [
+    {
+      "from_state": null,
+      "to_state": "BACKLOG",
+      "role": "SYSTEM",
+      "timestamp": "2026-10-30T20:55:33.119110+00:00",
+      "evidence": "Task initialized"
+    },
+    {
+      "from_state": "BACKLOG",
+      "to_state": "REQUIREMENT_READY",
+      "role": "BUSINESS_ANALYST",
+      "actor_id": "ba-1",
+      "timestamp": "2026-10-30T20:55:33.119539+00:00",
+      "evidence": {
+        "req": "ok"
+      },
+      "human_approved": false
+    },
+    {
+      "from_state": "REQUIREMENT_READY",
+      "to_state": "DESIGN_READY",
+      "role": "ARCHITECT",
+      "actor_id": "arch-1",
+      "timestamp": "2026-10-30T20:55:33.119625+00:00",
+      "evidence": {
+        "arch": "ok"
+      },
+      "human_approved": false
+    }
+  ],
+  "artifacts": {},
+  "approvals": {}
+}

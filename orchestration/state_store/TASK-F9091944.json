@@ -1,0 +1,75 @@
+{
+  "task_id": "TASK-F9091944",
+  "title": "Self-cert attack",
+  "prompt": "Test self-approval",
+  "profile": "production_software",
+  "safety_critical": false,
+  "team": [],
+  "current_state": "QA_IN_PROGRESS",
+  "history": [
+    {
+      "from_state": null,
+      "to_state": "BACKLOG",
+      "role": "SYSTEM",
+      "timestamp": "2026-10-30T20:55:56.189133+00:00",
+      "evidence": "Task initialized"
+    },
+    {
+      "from_state": "BACKLOG",
+      "to_state": "REQUIREMENT_READY",
+      "role": "BUSINESS_ANALYST",
+      "actor_id": "ba-1",
+      "timestamp": "2026-10-30T20:55:56.189574+00:00",
+      "evidence": {
+        "req": "ok"
+      },
+      "human_approved": false
+    },
+    {
+      "from_state": "REQUIREMENT_READY",
+      "to_state": "DESIGN_READY",
+      "role": "ARCHITECT",
+      "actor_id": "arch-1",
+      "timestamp": "2026-10-30T20:55:56.189684+00:00",
+      "evidence": {
+        "arch": "ok"
+      },
+      "human_approved": false
+    },
+    {
+      "from_state": "DESIGN_READY",
+      "to_state": "IN_DEVELOPMENT",
+      "role": "DEVELOPER",
+      "actor_id": "dev-1",
+      "timestamp": "2026-10-30T20:55:56.189772+00:00",
+      "evidence": {
+        "code": "done"
+      },
+      "human_approved": false
+    },
+    {
+      "from_state": "IN_DEVELOPMENT",
+      "to_state": "DEV_VERIFIED",
+      "role": "DEVELOPER",
+      "actor_id": "dev-1",
+      "timestamp": "2026-10-30T20:55:56.189850+00:00",
+      "evidence": {
+        "tests": "pass"
+      },
+      "human_approved": false
+    },
+    {
+      "from_state": "DEV_VERIFIED",
+      "to_state": "QA_IN_PROGRESS",
+      "role": "DEVELOPER",
+      "actor_id": "dev-1",
+      "timestamp": "2026-10-30T20:55:56.189934+00:00",
+      "evidence": {
+        "tests": "enter qa"
+      },
+      "human_approved": false
+    }
+  ],
+  "artifacts": {},
+  "approvals": {}
+}

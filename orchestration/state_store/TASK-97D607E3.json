@@ -1,0 +1,31 @@
+{
+  "task_id": "TASK-97D607E3",
+  "title": "Replay attack",
+  "prompt": "Test duplicate step",
+  "profile": "production_software",
+  "safety_critical": false,
+  "team": [],
+  "current_state": "REQUIREMENT_READY",
+  "history": [
+    {
+      "from_state": null,
+      "to_state": "BACKLOG",
+      "role": "SYSTEM",
+      "timestamp": "2026-10-30T20:55:33.124982+00:00",
+      "evidence": "Task initialized"
+    },
+    {
+      "from_state": "BACKLOG",
+      "to_state": "REQUIREMENT_READY",
+      "role": "BUSINESS_ANALYST",
+      "actor_id": "ba-1",
+      "timestamp": "2026-10-30T20:55:33.125379+00:00",
+      "evidence": {
+        "req": "first"
+      },
+      "human_approved": false
+    }
+  ],
+  "artifacts": {},
+  "approvals": {}
+}

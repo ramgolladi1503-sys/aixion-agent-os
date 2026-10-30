@@ -1,0 +1,20 @@
+{
+  "task_id": "TASK-36694983",
+  "title": "Jump attack",
+  "prompt": "Attempt direct release",
+  "profile": "production_software",
+  "safety_critical": false,
+  "team": [],
+  "current_state": "BACKLOG",
+  "history": [
+    {
+      "from_state": null,
+      "to_state": "BACKLOG",
+      "role": "SYSTEM",
+      "timestamp": "2026-10-30T20:55:56.261159+00:00",
+      "evidence": "Task initialized"
+    }
+  ],
+  "artifacts": {},
+  "approvals": {}
+}
