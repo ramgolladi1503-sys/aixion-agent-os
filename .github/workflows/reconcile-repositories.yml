@@ -1,0 +1,25 @@
+name: Reconcile Aixion-managed repositories
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reconcile:
+    if: ${{ vars.AIXION_RECONCILE_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install GitHub CLI
+        run: gh --version
+      - name: Reconcile tagged repositories
+        env:
+          GH_TOKEN: ${{ secrets.AIXION_ROLLOUT_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::AIXION_ROLLOUT_TOKEN not configured"
+            exit 1
+          fi
+          PYTHONPATH=. python3 onboarding/github_reconcile.py --owner ramgolladi1503-sys --apply
