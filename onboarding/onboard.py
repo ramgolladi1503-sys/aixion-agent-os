@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 
 POLICY_REPO = "ramgolladi1503-sys/aixion-agent-os"
-WORKFLOW_REF = "master"
+WORKFLOW_REF = "3509b5546bd63c18126eede603c1d52fff67cd34"
 
 def _technology(path):
     indicators = {
@@ -85,7 +85,7 @@ permissions:
   contents: read
 jobs:
   governance:
-    uses: ramgolladi1503-sys/aixion-agent-os/.github/workflows/reusable-governance.yml@master
+    uses: ramgolladi1503-sys/aixion-agent-os/.github/workflows/reusable-governance.yml@3509b5546bd63c18126eede603c1d52fff67cd34
 """
     governance = """# Organization governance
 
