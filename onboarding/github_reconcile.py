@@ -12,7 +12,10 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-from onboarding.onboard import onboard_project
+try:
+    from onboarding.onboard import onboard_project
+except ModuleNotFoundError:
+    from onboard import onboard_project
 
 def run(args, cwd=None):
     return subprocess.check_output(args, cwd=cwd, text=True, stderr=subprocess.PIPE).strip()
