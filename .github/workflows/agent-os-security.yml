@@ -6,6 +6,7 @@ on:
       - 'orchestration/engine.py'
       - 'evaluation/test_security_regressions.py'
       - 'evaluation/test_onboarding.py'
+      - 'evaluation/test_reconcile.py'
       - 'onboarding/**'
       - '.github/workflows/reusable-governance.yml'
       - '.github/workflows/agent-os-security.yml'
@@ -25,6 +26,6 @@ jobs:
         with:
           python-version: '3.12'
       - name: Compile changed Python files
-        run: python -m py_compile routing/router.py orchestration/engine.py evaluation/test_security_regressions.py evaluation/test_onboarding.py onboarding/onboard.py
+        run: python -m py_compile routing/router.py orchestration/engine.py evaluation/test_security_regressions.py evaluation/test_onboarding.py evaluation/test_reconcile.py onboarding/onboard.py onboarding/github_reconcile.py
       - name: Execute isolated security regression tests
-        run: PYTHONPATH=. python -m unittest -v evaluation.test_security_regressions evaluation.test_onboarding
+        run: PYTHONPATH=. python -m unittest -v evaluation.test_security_regressions evaluation.test_onboarding evaluation.test_reconcile
