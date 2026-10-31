@@ -41,8 +41,10 @@ depend on plan and ownership. Do not claim coverage without validating it.
 
 ## Current status
 Central reusable workflow and local bootstrap: implemented on feature branch,
-subject to CI. Cross-repository rollout and automatic repo-created events:
-NOT IMPLEMENTED. No existing application repository was changed in this PR.
+subject to CI. Application rollout: 16 draft onboarding PRs opened in the owner's 16 other repositories;
+none merged. Scheduled future-repository reconciliation is implemented but disabled.
+Instantaneous repo-created webhook onboarding is NOT IMPLEMENTED.
+Aixion Agent OS is the 17th repository and the central policy source.
 
 ## Scheduled GitHub reconciliation (implemented, disabled by default)
 
@@ -68,3 +70,22 @@ GitHub Actions scheduling delay. **This is eventual onboarding, not an
 instantaneous repository-created webhook**. Repositories without the topic
 are intentionally out of scope, including legacy repos until explicitly tagged.
 The workflow is NOT enabled by this PR, and no rollout token was configured.
+
+## Pilot and authorization gate
+
+The website pilot (`aixion-lab-website` PR #21) passed its central
+`governance / validate-onboarding` job. Its separate browser/visual suite
+failed, so overall website CI is not green. The central policy implementation
+remains in draft PR #1 (security) and stacked PR #2 (onboarding); application
+PRs are also drafts. No claim of complete deployment is justified yet.
+
+**Authorization needed from repository owner:** approve central PR review and
+merges, then application PR review/merges after checks; configure the GitHub
+secret `AIXION_ROLLOUT_TOKEN` and variable `AIXION_RECONCILE_ENABLED` only
+after reviewing token scope. Do not paste tokens into PRs or chat. Grant
+`Contents: Read and write` and `Pull requests: Read and write` on explicitly
+selected repos; use a GitHub App for long-lived automation if possible.
+
+This onboarding does not execute Codex/Antigravity, authenticate human
+approvals, enforce branch protection, or connect Control Tower telemetry.
+Those are separate release blockers for a full autonomous Agent OS.
