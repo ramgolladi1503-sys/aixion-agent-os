@@ -1,0 +1,27 @@
+name: Agent OS security regression
+on:
+  pull_request:
+    paths:
+      - 'routing/**'
+      - 'orchestration/engine.py'
+      - 'evaluation/test_security_regressions.py'
+      - '.github/workflows/agent-os-security.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  security-regressions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile changed Python files
+        run: python -m py_compile routing/router.py orchestration/engine.py evaluation/test_security_regressions.py
+      - name: Execute isolated security regression tests
+        run: PYTHONPATH=. python -m unittest -v evaluation.test_security_regressions
